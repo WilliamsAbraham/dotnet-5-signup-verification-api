@@ -55,7 +55,7 @@ namespace WebApi.Services
         {
             var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
-            if (account == null || !account.IsVerified || !BC.Verify(model.Password, account.PasswordHash))
+            if (account is null || !account.IsVerified || !BC.Verify(model.Password, account.PasswordHash))
                 throw new AppException("Email or password is incorrect");
 
             // authentication successful so generate jwt and refresh tokens
@@ -103,6 +103,7 @@ namespace WebApi.Services
 
         public void RevokeToken(string token, string ipAddress)
         {
+
             var (refreshToken, account) = getRefreshToken(token);
 
             // revoke token and save
@@ -122,8 +123,10 @@ namespace WebApi.Services
                 return;
             }
 
+
             // map model to new account object
             var account = _mapper.Map<Account>(model);
+
 
             // first registered account is an admin
             var isFirstAccount = _context.Accounts.Count() == 0;
@@ -322,7 +325,7 @@ namespace WebApi.Services
             return BitConverter.ToString(randomBytes).Replace("-", "");
         }
 
-        private void sendVerificationEmail(Account account, string origin)
+        private void sendVerificationEmail( Account account, string origin)
         {
             string message;
             if (!string.IsNullOrEmpty(origin))
@@ -338,7 +341,7 @@ namespace WebApi.Services
             }
 
             _emailService.Send(
-                to: account.Email,
+                to:account.Email,
                 subject: "Sign-up Verification API - Verify Email",
                 html: $@"<h4>Verify Email</h4>
                          <p>Thanks for registering!</p>

@@ -22,7 +22,11 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
         if (account == null || (_roles.Any() && !_roles.Contains(account.Role)))
         {
             // not logged in or role not authorized
-            context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
+            context.Result = new JsonResult(new { message = "Unauthorized" })
+
+            { 
+                StatusCode = StatusCodes.Status401Unauthorized
+            };
         }
     }
 }
